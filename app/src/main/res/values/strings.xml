@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">RAF Dnevnjak</string>
+    <string name="username_input">Username</string>
+    <string name="email_input">Email</string>
+    <string name="password_input">Password</string>
+    <string name="login_button">Login</string>
+</resources>
