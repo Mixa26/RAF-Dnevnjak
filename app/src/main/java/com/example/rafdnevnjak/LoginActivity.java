@@ -190,6 +190,10 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Checks if a user is logged in, and if so brings them to the main page instead of the login
+     * again even if they quit the app.
+     */
     private void checkSession(){
         SharedPreferences sharedPreferences = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
         if (sharedPreferences.contains(currentUserKey)){
