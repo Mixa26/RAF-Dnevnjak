@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.core.splashscreen.SplashScreen;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.Button;
@@ -13,6 +16,7 @@ import android.widget.Toast;
 import com.example.rafdnevnjak.model.User;
 import com.example.rafdnevnjak.model.UsersDTO;
 import com.example.rafdnevnjak.viewmodels.SplashViewModel;
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,13 +34,16 @@ public class LoginActivity extends AppCompatActivity {
 
     private SplashViewModel splashViewModel;
 
+    //Logical variables
     private ArrayList<User> users;
+    public static final String currentUserKey = "current-user";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         initSplash();
+        checkSession();
 
         setContentView(R.layout.activity_login);
 
@@ -84,8 +91,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
         catch (IOException e){
-            //TODO drop a snackbar with an error message
-            e.printStackTrace();
+            Toast.makeText(this, R.string.app_user_internal_error, Toast.LENGTH_LONG).show();
         }
 
         //Transfering users from a JSON string "line" to a Java ArrayList "users"
@@ -106,7 +112,16 @@ public class LoginActivity extends AppCompatActivity {
 
             for (User user: users){
                 if (username.equals(user.getUsername()) && email.equals(user.getEmail()) && password.equals(user.getPassword())){
-                    //TODO successful login, redirect the user
+                    //If user found, bring him to the main activity
+                    SharedPreferences.Editor sharedPreferences = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE).edit();
+
+                    Gson gs = new Gson();
+
+                    sharedPreferences.putString(currentUserKey, gs.toJson(user));
+                    sharedPreferences.apply();
+
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
                     return;
                 }
             }
@@ -115,6 +130,13 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Checks if the login input is correct.
+     * @param email String of user email input.
+     * @param username String of user username input.
+     * @param password String of user password input.
+     * @return Return true if all input is ok, false otherwise.
+     */
     private boolean checkInput(String email, String username, String password){
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
                 "[a-zA-Z0-9_+&*-]+)*@" +
@@ -123,22 +145,25 @@ public class LoginActivity extends AppCompatActivity {
 
         if (email.equals(""))
         {
-            Toast.makeText(this, R.string.email_empty_alert, Toast.LENGTH_SHORT).show();
+            loginEmail.setError(getResources().getString(R.string.email_empty_alert));
             return false;
         }
-        else if (!email.matches(emailRegex))
+
+        if (username.equals(""))
+        {
+            loginUsername.setError(getResources().getString(R.string.username_empty_alert));
+            return false;
+        }
+
+        if (password.equals(""))
+        {
+            loginPassword.setError(getResources().getString(R.string.password_empty_alert));
+            return false;
+        }
+
+        if (!email.matches(emailRegex))
         {
             Toast.makeText(this, R.string.email_invalid_alert, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        else if (username.equals(""))
-        {
-            Toast.makeText(this, R.string.username_empty_alert, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        else if (password.equals(""))
-        {
-            Toast.makeText(this, R.string.password_empty_alert, Toast.LENGTH_SHORT).show();
             return false;
         }
         else if (password.length() < 5)
@@ -165,7 +190,11 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    private void login(){
-
+    private void checkSession(){
+        SharedPreferences sharedPreferences = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
+        if (sharedPreferences.contains(currentUserKey)){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 }

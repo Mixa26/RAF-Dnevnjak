@@ -13,4 +13,5 @@
     <string name="password_no_num_alert">Password must contain at least one number!</string>
     <string name="password_forbidden_symbols_alert">Password must not contain any of the "~#^|$%&amp;*!" symbols!</string>
     <string name="no_such_user_alert">No user with provided credentials exists.</string>
+    <string name="app_user_internal_error">Internal error occurred while reading users :(</string>
 </resources>
