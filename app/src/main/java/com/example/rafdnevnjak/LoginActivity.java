@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.rafdnevnjak.model.User;
 import com.example.rafdnevnjak.model.UsersDTO;
@@ -101,6 +102,8 @@ public class LoginActivity extends AppCompatActivity {
             String username = loginUsername.getText().toString();
             String password = loginPassword.getText().toString();
 
+            if (!checkInput(email,username,password))return;
+
             for (User user: users){
                 if (username.equals(user.getUsername()) && email.equals(user.getEmail()) && password.equals(user.getPassword())){
                     //TODO successful login, redirect the user
@@ -108,8 +111,58 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
 
-            //TODO unsuccessful login, drop a snackbar with an error message
+            Toast.makeText(this, R.string.no_such_user_alert, Toast.LENGTH_LONG).show();
         });
+    }
+
+    private boolean checkInput(String email, String username, String password){
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        if (email.equals(""))
+        {
+            Toast.makeText(this, R.string.email_empty_alert, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if (!email.matches(emailRegex))
+        {
+            Toast.makeText(this, R.string.email_invalid_alert, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if (username.equals(""))
+        {
+            Toast.makeText(this, R.string.username_empty_alert, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if (password.equals(""))
+        {
+            Toast.makeText(this, R.string.password_empty_alert, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if (password.length() < 5)
+        {
+            Toast.makeText(this, R.string.password_short_alert, Toast.LENGTH_LONG).show();
+            return false;
+        }
+        else if (password.equals(password.toLowerCase()))
+        {
+            Toast.makeText(this, R.string.password_lowercase_alert, Toast.LENGTH_LONG).show();
+            return false;
+        }
+        else if (!password.matches(".*\\d+.*"))
+        {
+            Toast.makeText(this, R.string.password_no_num_alert, Toast.LENGTH_LONG).show();
+            return false;
+        }
+        else if (!password.matches(".*[~#^|$%&*!]*.*"))
+        {
+            Toast.makeText(this, R.string.password_forbidden_symbols_alert, Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
     }
 
     private void login(){

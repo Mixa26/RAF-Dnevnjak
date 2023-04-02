@@ -4,4 +4,13 @@
     <string name="email_input">Email</string>
     <string name="password_input">Password</string>
     <string name="login_button">Login</string>
+    <string name="email_empty_alert">Email can\'t be empty!</string>
+    <string name="email_invalid_alert">Please type in a valid email.</string>
+    <string name="username_empty_alert">Username can\'t be empty!</string>
+    <string name="password_empty_alert">Password can\'t be empty!</string>
+    <string name="password_short_alert">Password must be at least 5 characters long!</string>
+    <string name="password_lowercase_alert">Password must contain at least one upper case letter!</string>
+    <string name="password_no_num_alert">Password must contain at least one number!</string>
+    <string name="password_forbidden_symbols_alert">Password must not contain any of the "~#^|$%&amp;*!" symbols!</string>
+    <string name="no_such_user_alert">No user with provided credentials exists.</string>
 </resources>
