@@ -46,10 +46,6 @@ public class RecyclerViewModel extends ViewModel {
         dates.setValue(listToSubmit);
     }
 
-    public MutableLiveData<List<Date>> getDates() {
-        return dates;
-    }
-
     /**
      * Loads upcoming month at the bottom of calendar
      */
@@ -99,5 +95,13 @@ public class RecyclerViewModel extends ViewModel {
         //A little hack so that the mutable live date registers the change of values
         ArrayList<Date> listToSubmit = new ArrayList<>(datesList);
         dates.setValue(listToSubmit);
+    }
+
+    public MutableLiveData<List<Date>> getDates() {
+        return dates;
+    }
+
+    public ArrayList<Date> getDatesList() {
+        return datesList;
     }
 }

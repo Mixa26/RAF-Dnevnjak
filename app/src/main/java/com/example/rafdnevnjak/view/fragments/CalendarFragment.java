@@ -13,9 +13,14 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rafdnevnjak.R;
+import com.example.rafdnevnjak.model.Date;
 import com.example.rafdnevnjak.view.recycler.adapter.MonthAdapter;
 import com.example.rafdnevnjak.view.recycler.differ.DateDiffItemCallback;
 import com.example.rafdnevnjak.viewmodels.RecyclerViewModel;
+
+import java.time.format.TextStyle;
+import java.util.Locale;
+import java.util.Objects;
 
 public class CalendarFragment extends Fragment {
 
@@ -32,6 +37,10 @@ public class CalendarFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_calendar, container, false);
         recyclerViewModel = new ViewModelProvider(this).get(RecyclerViewModel.class);
+
+        //Initial setting of the title to the corresponding month and year
+        Date lastDate = recyclerViewModel.getDatesList().get(recyclerViewModel.getDatesList().size()-1);
+        getActivity().setTitle(lastDate.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + lastDate.getDate().getYear() + ".");
 
         init();
 
@@ -67,10 +76,28 @@ public class CalendarFragment extends Fragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
+                //Sets the title of the corresponding month the user is looking at when scrolling down
+                if (dy > 0){
+                    Date date = recyclerViewModel.getDatesList().get(((GridLayoutManager) Objects.requireNonNull(recyclerView.getLayoutManager())).findLastVisibleItemPosition());
+                    if (date.getDate().getDayOfMonth() >= 25){
+                        getActivity().setTitle(date.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + date.getDate().getYear() + ".");
+                    }
+                }
+
+                //Sets the title of the corresponding month the user is looking at when scrolling up
+                if (dy < 0){
+                    Date date = recyclerViewModel.getDatesList().get(((GridLayoutManager) Objects.requireNonNull(recyclerView.getLayoutManager())).findFirstVisibleItemPosition());
+                    if (date.getDate().getDayOfMonth() <= 15){
+                        getActivity().setTitle(date.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + date.getDate().getYear() + ".");
+                    }
+                }
+
+                //Loads the next month when user scrolls to the bottom of the calendar
                 if (!recyclerView.findFocus().canScrollVertically(1)) {
                     recyclerViewModel.addMonth();
                 }
 
+                //Loads the previous month when user scrolls to the top of the calendar
                 if (!recyclerView.findFocus().canScrollVertically(-1)) {
                     recyclerViewModel.addMonthToBeginning();
                 }
