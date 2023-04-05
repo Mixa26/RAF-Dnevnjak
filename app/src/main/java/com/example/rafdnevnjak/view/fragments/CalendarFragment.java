@@ -38,10 +38,6 @@ public class CalendarFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_calendar, container, false);
         recyclerViewModel = new ViewModelProvider(this).get(RecyclerViewModel.class);
 
-        //Initial setting of the title to the corresponding month and year
-        Date lastDate = recyclerViewModel.getDatesList().get(recyclerViewModel.getDatesList().size()-1);
-        getActivity().setTitle(lastDate.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + lastDate.getDate().getYear() + ".");
-
         init();
 
         return view;
@@ -109,9 +105,7 @@ public class CalendarFragment extends Fragment {
      * Initializes the recycler view that will show the calendar
      */
     private void initRecycler(){
-        monthAdapter = new MonthAdapter(new DateDiffItemCallback(), date -> {
-            //TODO open the tasks for that date
-        });
+        monthAdapter = new MonthAdapter(new DateDiffItemCallback(), date -> {});
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 7));
         recyclerView.setAdapter(monthAdapter);
     }

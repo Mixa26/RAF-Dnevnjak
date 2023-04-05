@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rafdnevnjak.R;
 import com.example.rafdnevnjak.model.Date;
+import com.example.rafdnevnjak.view.activities.MainActivity;
 
 public class MonthAdapter extends ListAdapter<Date, MonthAdapter.DayViewHolder> {
 
@@ -41,6 +43,11 @@ public class MonthAdapter extends ListAdapter<Date, MonthAdapter.DayViewHolder> 
     public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
         Date date = getItem(position);
         holder.bind(date);
+
+        //Open the DailyPlanFragment when a date is selected
+        holder.itemView.setOnClickListener(v -> {
+            ((MainActivity)holder.itemView.getContext()).openDailyPlanMenu(date);
+        });
     }
 
     public static class DayViewHolder extends RecyclerView.ViewHolder {
@@ -57,11 +64,13 @@ public class MonthAdapter extends ListAdapter<Date, MonthAdapter.DayViewHolder> 
                 }
             });
 
+            //Get the view components for the day and date so we can set them later
             dayOfWeek = itemView.findViewById(R.id.dayOfWeek);
             dateOfMonth = itemView.findViewById(R.id.dateOfMonth);
         }
 
         public void bind(Date date){
+            //Set the day of week text and date text
             dayOfWeek.setText(date.getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
             dateOfMonth.setText(String.valueOf(date.getDate().getDayOfMonth()));
         }
