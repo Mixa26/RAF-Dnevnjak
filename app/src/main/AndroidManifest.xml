@@ -12,10 +12,10 @@
         android:theme="@style/Theme.RAFDnevnjak"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".view.activities.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".view.activities.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.RAFDnevnjak.Splash">
             <intent-filter>

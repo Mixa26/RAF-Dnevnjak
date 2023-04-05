@@ -1,4 +1,4 @@
-package com.example.rafdnevnjak;
+package com.example.rafdnevnjak.view.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.rafdnevnjak.R;
 import com.example.rafdnevnjak.model.User;
 import com.example.rafdnevnjak.model.UsersDTO;
 import com.example.rafdnevnjak.viewmodels.SplashViewModel;
