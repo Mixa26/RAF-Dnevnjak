@@ -8,15 +8,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.rafdnevnjak.R;
 import com.example.rafdnevnjak.model.Date;
 import com.example.rafdnevnjak.view.fragments.CalendarFragment;
+import com.example.rafdnevnjak.view.fragments.DailyPlanFragment;
 import com.example.rafdnevnjak.view.recycler.adapter.MonthAdapter;
 import com.example.rafdnevnjak.view.recycler.differ.DateDiffItemCallback;
 import com.example.rafdnevnjak.view.viewpager.PagerAdapter;
 import com.example.rafdnevnjak.viewmodels.RecyclerViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -26,6 +29,8 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
+
+    private PagerAdapter pagerAdapter;
 
     private Date dateSelected;
 
@@ -47,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initViewPager(){
         viewPager = findViewById(R.id.viewPager);
-        viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(PagerAdapter.CALENDAR, false);
 
         //Initial setting of the title to the corresponding month and year

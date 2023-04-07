@@ -12,6 +12,7 @@ import com.example.rafdnevnjak.view.fragments.ProfileFragment;
 
 public class PagerAdapter extends FragmentPagerAdapter {
 
+    //Each of these items corresponds to a Fragment view to be displayed
     private final int ITEM_COUNT = 3;
     public static final int CALENDAR = 0;
     public static final int DAILY_PLAN = 1;

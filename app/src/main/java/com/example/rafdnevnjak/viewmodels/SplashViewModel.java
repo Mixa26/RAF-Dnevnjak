@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Simple class used for showing the splash screen when the app starts
+ */
 public class SplashViewModel extends ViewModel {
 
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(true);

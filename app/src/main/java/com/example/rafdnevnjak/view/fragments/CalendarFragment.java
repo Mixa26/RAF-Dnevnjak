@@ -56,7 +56,7 @@ public class CalendarFragment extends Fragment {
      * Finds view elements from the screen so we can use their data later.
      */
     private void initView(){
-        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerViewCalendar);
     }
 
     /**
@@ -89,14 +89,16 @@ public class CalendarFragment extends Fragment {
                 }
 
                 //Loads the next month when user scrolls to the bottom of the calendar
-                if (!recyclerView.findFocus().canScrollVertically(1)) {
-                    recyclerViewModel.addMonth();
-                }
+                if (recyclerView.findFocus() != null)
+                    if (!recyclerView.findFocus().canScrollVertically(1)) {
+                        recyclerViewModel.addMonth();
+                    }
 
                 //Loads the previous month when user scrolls to the top of the calendar
-                if (!recyclerView.findFocus().canScrollVertically(-1)) {
-                    recyclerViewModel.addMonthToBeginning();
-                }
+                if (recyclerView.findFocus() != null)
+                    if (!recyclerView.findFocus().canScrollVertically(-1)) {
+                        recyclerViewModel.addMonthToBeginning();
+                    }
             }
         });
     }

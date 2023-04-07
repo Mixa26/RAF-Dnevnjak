@@ -15,4 +15,18 @@
     <string name="no_such_user_alert">No user with provided credentials exists.</string>
     <string name="app_user_internal_error">Internal error occurred while reading users :(</string>
     <string name="profile">Profile</string>
+    <string name="show_past_obligations_button">Show past obligations</string>
+    <string name="low_importance">Low</string>
+    <string name="mid_importance">Mid</string>
+    <string name="high_importance">High</string>
+    <string name="create_button">Create</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="title_text_input">Title</string>
+    <string name="time_text_input">Time</string>
+    <string name="description_text_input">Description</string>
+    <string name="choose_start_time">Choose start time</string>
+    <string name="choose_end_time">Choose end time</string>
+    <string name="time_not_selected_alert">Both start and end time must be selected!</string>
+    <string name="obligation_text_empty_alert">Obligation title mustn\'t be empty</string>
+    <string name="bad_time_selection_alert">Start time must be before end time!</string>
 </resources>

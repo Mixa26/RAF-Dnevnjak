@@ -17,8 +17,12 @@ import java.util.Locale;
  */
 public class RecyclerViewModel extends ViewModel {
 
+    //This class keeps track if there are changes made and notices the other
+    //components which are observing changes (like the view for example)
     private final MutableLiveData<List<Date>> dates = new MutableLiveData<>();
 
+    //This array list is just used so we can submit data to the list above,
+    //else it doesn't notice the changes
     private ArrayList<Date> datesList = new ArrayList<Date>();
 
     public RecyclerViewModel(){
