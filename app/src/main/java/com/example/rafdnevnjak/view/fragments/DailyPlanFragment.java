@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -149,6 +150,7 @@ public class DailyPlanFragment extends Fragment {
 
         //When the add button is pressed it opens the ObligationActivity so we can
         //create a new obligation for the selected date
+        //We receive the obligation later through the intent
         addObligationButton.setOnClickListener(view -> {
             Intent intent = new Intent(getContext(), ObligationActivity.class);
             startActivityForResult(intent, 1);
@@ -156,13 +158,18 @@ public class DailyPlanFragment extends Fragment {
 
     }
 
-
+    //This is where we pick up the created obligation from the ObligationActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             Obligation obligation = data.getParcelableExtra("obligation");
-            calendarViewModel.addObligation(getActivity().getTitle().toString(), obligation);
+            if (calendarViewModel.checkTimeAvailability(getActivity().getTitle().toString(), obligation)) {
+                calendarViewModel.addObligation(getActivity().getTitle().toString(), obligation);
+            }
+            else{
+                Toast.makeText(getActivity(), R.string.obligation_time_overlap, Toast.LENGTH_LONG).show();
+            }
         }
     }
 }

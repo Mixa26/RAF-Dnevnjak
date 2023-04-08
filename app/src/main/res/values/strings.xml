@@ -29,4 +29,5 @@
     <string name="time_not_selected_alert">Both start and end time must be selected!</string>
     <string name="obligation_text_empty_alert">Obligation title mustn\'t be empty</string>
     <string name="bad_time_selection_alert">Start time must be before end time!</string>
+    <string name="obligation_time_overlap">There are existing obligations at the provided time!</string>
 </resources>

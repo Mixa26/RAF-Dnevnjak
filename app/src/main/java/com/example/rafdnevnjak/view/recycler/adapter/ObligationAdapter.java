@@ -1,5 +1,6 @@
 package com.example.rafdnevnjak.view.recycler.adapter;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,10 +49,11 @@ public class ObligationAdapter extends ListAdapter<Obligation, ObligationAdapter
             image = itemView.findViewById(R.id.obligationSeverity);
         }
 
+        @SuppressLint("DefaultLocale")
         public void bind(Obligation obligation){
             //Edit the view components
-            time.setText(new String(obligation.getStartHour() + ":" + obligation.getStartMinute()
-                    + " - " + obligation.getEndHour() + ":" + obligation.getEndMinute()));
+            time.setText(new String(String.format("%02d", obligation.getStartHour()) + ":" + String.format("%02d", obligation.getStartMinute())
+                    + " - " + String.format("%02d", obligation.getEndHour()) + ":" + String.format("%02d", obligation.getEndMinute())));
 
             title.setText(obligation.getTitle());
 

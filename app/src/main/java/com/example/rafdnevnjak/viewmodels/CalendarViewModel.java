@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.rafdnevnjak.model.Obligation;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -56,5 +57,56 @@ public class CalendarViewModel extends ViewModel {
         if (obligationsToReturn == null)return null;
 
         return obligationsToReturn;
+    }
+
+    /**
+     * Checks if there is overlapping obligations and return false in that case
+     * @param dateKey The date formated as (Month dd. yyyy.) for example April 23. 2023.
+     * @param obligation The obligation to check the time availability for.
+     * @return false if there are overlapping obligations at the provided time, true otherwise
+     */
+    public boolean checkTimeAvailability(String dateKey, Obligation obligation){
+        ArrayList<Obligation> dailyObligations = obligationsList.get(dateKey);
+
+        //This shouldn't happen, but we ensure the sanity check
+        if (dailyObligations == null) return false;
+
+        //If list is empty, there is surely time for the obligation
+        if (dailyObligations.size() == 0) return true;
+
+        //This sorts all the obligations by their finishing time and then by its beginning time
+        Comparator<Obligation> byTime = Comparator.comparing(Obligation::getEndHour)
+                .thenComparing(Obligation::getEndMinute)
+                .thenComparing(Obligation::getStartHour)
+                .thenComparing(Obligation::getStartMinute);
+
+        dailyObligations.sort(byTime);
+
+        //Check the overlap based on the end of the obligation to be added and the start
+        //of the obligation existing in the list, and then check the start time of the
+        //obligation to be added and the end of the previous one in the list
+        int obligationStart = 0;
+        int obligationEnd = 0;
+        int currStart = 0;
+        int beforeCurrEnd = 0;
+        for (int i = 0; i < dailyObligations.size(); i++){
+            obligationStart = obligation.getStartHour() * 100 + obligation.getStartMinute();
+            obligationEnd = obligation.getEndHour() * 100 + obligation.getEndMinute();
+            currStart = dailyObligations.get(i).getStartHour() * 100 + dailyObligations.get(i).getStartMinute();
+            beforeCurrEnd = 0;
+            if (i != 0) {
+                beforeCurrEnd = dailyObligations.get(i - 1).getEndHour() * 100 + dailyObligations.get(i-1).getEndMinute();
+            }
+
+            if (obligationEnd <= currStart){
+                if (beforeCurrEnd > obligationStart){
+                    return false;
+                }
+                return true;
+            }
+        }
+        beforeCurrEnd = dailyObligations.get(dailyObligations.size()-1).getEndHour() * 100 + dailyObligations.get(dailyObligations.size()-1).getEndMinute();
+
+        return obligationStart >= beforeCurrEnd;
     }
 }

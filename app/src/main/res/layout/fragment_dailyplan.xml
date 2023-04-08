@@ -57,7 +57,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="315dp"
         android:id="@+id/recyclerViewDailyPlan"
         android:scrollbars="vertical"
         app:layout_constraintTop_toBottomOf="@+id/sortTabMenu"
