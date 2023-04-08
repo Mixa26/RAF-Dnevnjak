@@ -35,7 +35,10 @@ public class CalendarViewModel extends ViewModel {
 
         //If the list didn't have any other obligations for this date yet
         if (curr != null){
-            curr.add(obligation);
+            //Searching for the place to insert our obligation
+            int i = findInsertPosition(0, curr, obligation);
+
+            curr.add(i, obligation);
             ArrayList<Obligation> listToSubmit = new ArrayList<>(curr);
             obligations.get(dateKey).setValue(listToSubmit);
         }
@@ -49,6 +52,52 @@ public class CalendarViewModel extends ViewModel {
             mld.setValue(listToSubmit);
             obligations.replace(dateKey, mld);
         }
+    }
+
+    /**
+     * Returns the index at which the element should be inserted based on the sorting parameter
+     * @param sortParam 0 for sorting by time only, 1 for sorting by time and LOW obligation severity
+     *                  first, 2 for sorting by time and MID obligation severity and 3 for
+     *                  by time and HIGH obligation severity first
+     * @param curr ArrayList in which to search the index position
+     * @param obligation The obligation which you want to be added to the curr array
+     * @return the index at which the element should be inserted
+     */
+    private int findInsertPosition(int sortParam, ArrayList<Obligation> curr, Obligation obligation){
+
+        if (sortParam == 0) {
+            if (curr.size() != 0) {
+                int i = 0;
+                for (; i < curr.size(); i++) {
+                    int obligationStart = obligation.getStartHour() * 100 + obligation.getStartMinute();
+                    int obligationEnd = obligation.getEndHour() * 100 + obligation.getEndMinute();
+                    int currStart = curr.get(i).getStartHour() * 100 + curr.get(i).getStartMinute();
+                    int beforeCurrEnd = 0;
+                    if (i != 0) {
+                        beforeCurrEnd = curr.get(i - 1).getEndHour() * 100 + curr.get(i - 1).getEndMinute();
+                    }
+
+                    if (obligationEnd <= currStart) {
+                        if (beforeCurrEnd <= obligationStart) {
+                            break;
+                        }
+                    }
+                }
+                return i;
+            } else {
+                return 0;
+            }
+        }
+        else if (sortParam == 1){
+
+        }
+        else if (sortParam == 2){
+
+        }
+        else{
+
+        }
+        return 0;
     }
 
     public MutableLiveData<List<Obligation>> getObligations(String dateKey) {

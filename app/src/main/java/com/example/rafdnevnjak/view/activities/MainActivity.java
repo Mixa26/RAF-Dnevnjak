@@ -95,4 +95,8 @@ public class MainActivity extends AppCompatActivity {
         setTitle(dateSelected.getDate().getMonth().getDisplayName(TextStyle.FULL,Locale.ENGLISH) + " " + dateSelected.getDate().getDayOfMonth() + ". " + dateSelected.getDate().getYear() + ".");
         viewPager.setCurrentItem(PagerAdapter.DAILY_PLAN, false);
     }
+
+    public Date getDateSelected() {
+        return dateSelected;
+    }
 }

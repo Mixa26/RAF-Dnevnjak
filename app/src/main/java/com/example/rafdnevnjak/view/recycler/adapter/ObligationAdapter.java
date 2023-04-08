@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.rafdnevnjak.R;
 import com.example.rafdnevnjak.model.Date;
 import com.example.rafdnevnjak.model.Obligation;
+import com.example.rafdnevnjak.view.activities.MainActivity;
 
 public class ObligationAdapter extends ListAdapter<Obligation, ObligationAdapter.ObligationViewHolder> {
 

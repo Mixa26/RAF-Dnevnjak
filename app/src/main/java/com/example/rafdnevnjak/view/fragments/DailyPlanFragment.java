@@ -1,38 +1,39 @@
 package com.example.rafdnevnjak.view.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rafdnevnjak.R;
 import com.example.rafdnevnjak.model.Date;
 import com.example.rafdnevnjak.model.Obligation;
+import com.example.rafdnevnjak.view.activities.MainActivity;
 import com.example.rafdnevnjak.view.activities.ObligationActivity;
-import com.example.rafdnevnjak.view.recycler.adapter.MonthAdapter;
 import com.example.rafdnevnjak.view.recycler.adapter.ObligationAdapter;
-import com.example.rafdnevnjak.view.recycler.differ.DateDiffItemCallback;
 import com.example.rafdnevnjak.view.recycler.differ.ObligationDiffItemCallback;
 import com.example.rafdnevnjak.viewmodels.CalendarViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import java.time.format.TextStyle;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.List;
 import java.util.Objects;
 
 public class DailyPlanFragment extends Fragment {
@@ -56,6 +57,12 @@ public class DailyPlanFragment extends Fragment {
     //A button that opens the ObligationActivity so we can create a new Obligation
     private FloatingActionButton addObligationButton;
 
+    //The switch that enables/disables past obligations to be viewed
+    private SwitchCompat showPastObligationsSwitch;
+
+    //Search input
+    private SearchView searchView;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,19 +78,105 @@ public class DailyPlanFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        refreshObligationsView();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        searchView.setQuery("",false);
+        searchView.clearFocus();
+    }
+
+    /**
+     * Refreshes the rendering of the recycler view which shows obligations
+     */
+    public void refreshObligationsView(){
+        setUpObligationsView();
+        //TODO fix coloring of past events
+        //colorPastObligations();
+    }
+
+    /**
+     * Checks if a obligation has passed, and colors it gray if so
+     */
+    private void colorPastObligations(){
+        Date selectedDate = ((MainActivity)getActivity()).getDateSelected();
+
+        if ((selectedDate.getDate().isEqual(LocalDate.now()))){
+            List<Obligation> obligationsModels = obligationAdapter.getCurrentList();
+            for (int i = 0; i < obligationAdapter.getItemCount(); i++){
+                if (obligationsModels.get(i).getEndHour() < LocalTime.now().getHour() ||
+                        (obligationsModels.get(i).getEndHour() == LocalTime.now().getHour()
+                && obligationsModels.get(i).getEndMinute() < LocalTime.now().getMinute())) {
+                    ((ObligationAdapter.ObligationViewHolder) recyclerView.findViewHolderForAdapterPosition(i)).
+                            itemView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.light_gray));
+                }
+            }
+        }
+        else if (selectedDate.getDate().isBefore(LocalDate.now())){
+            for (int i = 0; i < obligationAdapter.getItemCount(); i++){
+                ((ObligationAdapter.ObligationViewHolder)recyclerView.findViewHolderForAdapterPosition(i)).
+                        itemView.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.light_gray));
+            }
+        }
+
+
+    }
+
+    /**
+     * Initializes RecyclerView which shows obligations for the selected date
+     */
+    private void setUpObligationsView(){
         //Initialize the MutableLiveData list right away so we don't get null pointer on observing
         //in the initializeListeners() function
         if (calendarViewModel.getObligations(getActivity().getTitle().toString()) == null) {
             calendarViewModel.setMutableLiveData(getActivity().getTitle().toString());
             obligationAdapter.submitList(new ArrayList<>());
 
-            calendarViewModel.getObligations(getActivity().getTitle().toString()).observe(getViewLifecycleOwner(), obligations -> {
-                obligationAdapter.submitList(obligations);
-            });
+            calendarViewModel.getObligations(getActivity().getTitle().toString()).observe(getViewLifecycleOwner(), this::addAvailableObligations);
         }
         else{
-            obligationAdapter.submitList(calendarViewModel.getObligations(getActivity().getTitle().toString()).getValue());
+            addAvailableObligations(calendarViewModel.getObligations(getActivity().getTitle().toString()).getValue());
         }
+    }
+
+    /**
+     * Adds all obligations except the ones in the past to the view
+     * @param obligations the list of all obligations for the selected date
+     */
+    private void addAvailableObligations(List<Obligation> obligations){
+        if (obligations == null)return;
+        obligationAdapter.submitList(new ArrayList<>());
+        Date selectedDate = ((MainActivity)getActivity()).getDateSelected();
+
+        if (showPastObligationsSwitch.isChecked()){
+            obligationAdapter.submitList(obligations);
+            return;
+        }
+
+        if ((selectedDate.getDate().isEqual(LocalDate.now()))){
+            ArrayList<Obligation> obligationsToAdd = new ArrayList<>();
+            //If selected date is today's date, check which obligations haven't passed
+            for (Obligation obligation : obligations){
+                if (obligation.getEndHour() > LocalTime.now().getHour()){
+                    obligationsToAdd.add(obligation);
+                }
+                else if (obligation.getEndHour() == LocalTime.now().getHour()){
+                    if (obligation.getEndMinute() >= LocalTime.now().getMinute()) {
+                        obligationsToAdd.add(obligation);
+                    }
+                }
+            }
+            obligationAdapter.submitList(new ArrayList<>(obligationsToAdd));
+        }
+        else if (selectedDate.getDate().isAfter(LocalDate.now())){
+            //If selected date is after today's date, add all obligations
+            obligationAdapter.submitList(obligations);
+        }
+        //Else the date is in the past and we don't show obligations unless its selected
+        //by the user (by default it's not)
     }
 
     /**
@@ -100,6 +193,9 @@ public class DailyPlanFragment extends Fragment {
      */
     private void initView(){
         recyclerView = view.findViewById(R.id.recyclerViewDailyPlan);
+
+        showPastObligationsSwitch = view.findViewById(R.id.switch_obligations);
+        searchView = view.findViewById(R.id.searchBar);
 
         tabLayout = view.findViewById(R.id.sortTabMenu);
         Objects.requireNonNull(tabLayout.getTabAt(0)).setText(R.string.low_importance);
@@ -123,6 +219,43 @@ public class DailyPlanFragment extends Fragment {
      * Initializes all the listeners for button presses and similar
      */
     private void initListeners(){
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return onQueryTextChange(query);
+            }
+
+            //Update the search as the user types
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (calendarViewModel.getObligations(getActivity().getTitle().toString()) == null ||
+                        calendarViewModel.getObligations(getActivity().getTitle().toString()).getValue() == null) return false;
+                List<Obligation> originalList = calendarViewModel.getObligations(getActivity().getTitle().toString()).getValue();
+
+                ArrayList<Obligation> filteredList = new ArrayList<>();
+                for (Obligation obligation : originalList){
+                    if (obligation.getTitle().contains(newText)){
+                        filteredList.add(obligation);
+                    }
+                }
+
+                addAvailableObligations(new ArrayList<>(filteredList));
+
+                return true;
+            }
+        });
+
+        showPastObligationsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+             @Override
+             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                 if (isChecked) {
+                     obligationAdapter.submitList(calendarViewModel.getObligations(getActivity().getTitle().toString()).getValue());
+                 } else {
+                     addAvailableObligations(calendarViewModel.getObligations(getActivity().getTitle().toString()).getValue());
+                 }
+             }});
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             //Sorts obligations based on which priority tab is selected
             @Override
@@ -153,6 +286,7 @@ public class DailyPlanFragment extends Fragment {
         //We receive the obligation later through the intent
         addObligationButton.setOnClickListener(view -> {
             Intent intent = new Intent(getContext(), ObligationActivity.class);
+            intent.putExtra("title", getActivity().getTitle());
             startActivityForResult(intent, 1);
         });
 
@@ -172,4 +306,5 @@ public class DailyPlanFragment extends Fragment {
             }
         }
     }
+
 }
