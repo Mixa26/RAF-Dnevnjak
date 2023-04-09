@@ -18,6 +18,7 @@ import com.example.rafdnevnjak.model.Date;
 import com.example.rafdnevnjak.model.Obligation;
 import com.example.rafdnevnjak.view.activities.DetailedObligationActivity;
 import com.example.rafdnevnjak.view.activities.MainActivity;
+import com.example.rafdnevnjak.view.activities.ObligationActivity;
 import com.example.rafdnevnjak.view.fragments.DailyPlanFragment;
 
 public class ObligationAdapter extends ListAdapter<Obligation, ObligationAdapter.ObligationViewHolder> {
@@ -40,8 +41,8 @@ public class ObligationAdapter extends ListAdapter<Obligation, ObligationAdapter
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(holder.itemView.getContext(), DetailedObligationActivity.class);
-            Obligation obligation1 = getCurrentList().get(position);
-            intent.putExtra("obligation", getCurrentList().get(position));
+            Obligation obligation1 = getCurrentList().get(holder.getAdapterPosition());
+            intent.putExtra("obligation", getCurrentList().get(holder.getAdapterPosition()));
             intent.putExtra("title", ((MainActivity)holder.itemView.getContext()).getTitle());
 
             holder.itemView.getContext().startActivity(intent);
@@ -51,9 +52,13 @@ public class ObligationAdapter extends ListAdapter<Obligation, ObligationAdapter
             DailyPlanFragment.deleteObligation(((MainActivity)holder.itemView.getContext()).getTitle().toString(), obligation);
         });
 
-//        holder.getEdit().setOnClickListener(v -> {
-//
-//        });
+        holder.getEdit().setOnClickListener(v -> {
+            Intent intent = new Intent(((MainActivity)holder.itemView.getContext()), ObligationActivity.class);
+            intent.putExtra("title", ((MainActivity)holder.itemView.getContext()).getTitle().toString());
+            intent.putExtra("edit", true);
+            intent.putExtra("oldObligation", obligation);
+            ((MainActivity)holder.itemView.getContext()).startActivityForResult(intent, 1);
+        });
     }
 
     public static class ObligationViewHolder extends RecyclerView.ViewHolder {
@@ -100,7 +105,7 @@ public class ObligationAdapter extends ListAdapter<Obligation, ObligationAdapter
         }
 
         public ImageView getEdit() {
-            edit = itemView.findViewById(R.id.editDetailedObligation);
+            edit = itemView.findViewById(R.id.obligationEditIcon);
             return edit;
         }
     }

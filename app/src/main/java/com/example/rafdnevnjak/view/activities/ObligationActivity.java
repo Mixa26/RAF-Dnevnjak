@@ -66,6 +66,13 @@ public class ObligationActivity extends AppCompatActivity {
     //0 is Low, 1 is Mid and 2 is High
     private int indexOfTabSelected;
 
+    //If the activity was started to be used for editing an existing obligation
+    private boolean edit;
+
+    //The old obligation, we need it if we use this activity for editing so we can show
+    //the old data
+    private Obligation oldObligation;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +84,9 @@ public class ObligationActivity extends AppCompatActivity {
 
         //Set the title to be the date for which we are creating the obligation
         setTitle(getIntent().getStringExtra("title"));
+
+        edit = getIntent().getBooleanExtra("edit", edit);
+        oldObligation = getIntent().getParcelableExtra("oldObligation");
 
         //Default selected tab is Low which is at index 0
         indexOfTabSelected = 0;
@@ -110,6 +120,28 @@ public class ObligationActivity extends AppCompatActivity {
         description = findViewById(R.id.obligationDescriptionText);
 
         createButton = findViewById(R.id.createButton);
+        //If we opened the activity to edit an existing activity, we need to fill in the data of
+        //the old obligation
+        if (edit){
+            createButton.setText(R.string.save);
+            startTimeTextView.setText(new String(String.format(Locale.getDefault(), "%02d:%02d",
+                    oldObligation.getStartHour(), oldObligation.getStartMinute())));
+            startTimeSelected = true;
+            endTimeTextView.setText(new String(String.format(Locale.getDefault(), "%02d:%02d",
+                    oldObligation.getEndHour(), oldObligation.getEndMinute())));
+            endTimeSelected = true;
+            title.setText(oldObligation.getTitle());
+            if (oldObligation.getObligationSeverity().equals(Obligation.ObligationSeverity.LOW)){
+                tabLayout.selectTab(tabLayout.getTabAt(0));
+            }
+            else if (oldObligation.getObligationSeverity().equals(Obligation.ObligationSeverity.MID)){
+                tabLayout.selectTab(tabLayout.getTabAt(1));
+            }
+            else {
+                tabLayout.selectTab(tabLayout.getTabAt(2));
+            }
+            description.setText(oldObligation.getDescription());
+        }
         cancelButton = findViewById(R.id.cancelButton);
     }
 
@@ -237,6 +269,9 @@ public class ObligationActivity extends AppCompatActivity {
 
                 Intent intent = new Intent();
                 intent.putExtra("obligation", obligation);
+                if (edit) {
+                    intent.putExtra("oldObligation", oldObligation);
+                }
                 setResult(Activity.RESULT_OK, intent);
 
                 finish();

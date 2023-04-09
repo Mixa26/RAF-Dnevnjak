@@ -1,12 +1,14 @@
 package com.example.rafdnevnjak.view.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -98,5 +100,13 @@ public class MainActivity extends AppCompatActivity {
 
     public Date getDateSelected() {
         return dateSelected;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK){
+            DailyPlanFragment.updateObligation(getTitle().toString(), data.getParcelableExtra("oldObligation"), data.getParcelableExtra("obligation"));
+        }
     }
 }

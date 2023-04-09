@@ -54,6 +54,11 @@ public class CalendarViewModel extends ViewModel {
         }
     }
 
+    /**
+     * Deletes an existing obligation
+     * @param dateKey string key of the date in the format (Day mm. yyyy.) for example April 23. 2023.
+     * @param obligation a obligation object to be deleted
+     */
     public void deleteObligation(String dateKey, Obligation obligation) {
         ArrayList<Obligation> currObligations = obligationsList.get(dateKey);
         int toDelete = -1;
@@ -71,6 +76,32 @@ public class CalendarViewModel extends ViewModel {
         }
 
         obligationsList.get(dateKey).remove(toDelete);
+        obligations.get(dateKey).setValue(new ArrayList<>(obligationsList.get(dateKey)));
+    }
+
+    /**
+     * Updates the obligation data
+     * @param dateKey string key of the date in the format (Day mm. yyyy.) for example April 23. 2023.
+     * @param oldObligation old obligation object
+     * @param newObligation new obligation object (with the new data)
+     */
+    public void updateObligation(String dateKey, Obligation oldObligation, Obligation newObligation) {
+        ArrayList<Obligation> currObligations = obligationsList.get(dateKey);
+        int toUpdate = -1;
+
+        for (int i = 0; i < currObligations.size(); i++){
+            if (currObligations.get(i).getTitle().equals(oldObligation.getTitle())
+                    && currObligations.get(i).getStartHour() == oldObligation.getStartHour()
+                    && currObligations.get(i).getStartMinute() == oldObligation.getStartMinute()
+                    && currObligations.get(i).getEndHour() == oldObligation.getEndHour()
+                    && currObligations.get(i).getEndMinute() == oldObligation.getEndMinute())
+            {
+                toUpdate = i;
+                break;
+            }
+        }
+
+        obligationsList.get(dateKey).set(toUpdate, newObligation);
         obligations.get(dateKey).setValue(new ArrayList<>(obligationsList.get(dateKey)));
     }
 

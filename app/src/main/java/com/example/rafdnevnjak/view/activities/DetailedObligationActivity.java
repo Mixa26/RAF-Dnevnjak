@@ -1,5 +1,6 @@
 package com.example.rafdnevnjak.view.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -75,7 +76,11 @@ public class DetailedObligationActivity extends AppCompatActivity {
      */
     private void initListeners(){
         editButton.setOnClickListener(v -> {
-
+            Intent intent = new Intent(this, ObligationActivity.class);
+            intent.putExtra("title", getTitle());
+            intent.putExtra("edit", true);
+            intent.putExtra("oldObligation", obligation);
+            startActivityForResult(intent, 1);
         });
 
         deleteButton.setOnClickListener(v -> {
@@ -83,5 +88,20 @@ public class DetailedObligationActivity extends AppCompatActivity {
 
             finish();
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK){
+            Obligation newObligation = data.getParcelableExtra("obligation");
+            DailyPlanFragment.updateObligation(getTitle().toString(), obligation, newObligation);
+
+            titleText.setText(newObligation.getTitle());
+            timeText.setText(new String(String.format(Locale.getDefault(), "%02d:%02d - %02d:%02d",
+                    newObligation.getStartHour(), newObligation.getStartMinute(),
+                    newObligation.getEndHour(), newObligation.getEndMinute())));
+            descriptionText.setText(newObligation.getDescription());
+        }
     }
 }

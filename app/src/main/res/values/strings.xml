@@ -40,4 +40,5 @@
     <string name="password_changed_success">Password successfully updated.</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="save">Save</string>
 </resources>

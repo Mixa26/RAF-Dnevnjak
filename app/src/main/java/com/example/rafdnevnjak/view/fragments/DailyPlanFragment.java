@@ -287,6 +287,7 @@ public class DailyPlanFragment extends Fragment {
         addObligationButton.setOnClickListener(view -> {
             Intent intent = new Intent(getContext(), ObligationActivity.class);
             intent.putExtra("title", getActivity().getTitle());
+            intent.putExtra("edit", false);
             startActivityForResult(intent, 1);
         });
 
@@ -310,5 +311,9 @@ public class DailyPlanFragment extends Fragment {
 
     public static void deleteObligation(String dateKey, Obligation obligation){
         calendarViewModel.deleteObligation(dateKey, obligation);
+    }
+
+    public static void updateObligation(String dataKey, Obligation oldObligation, Obligation newObligation){
+        calendarViewModel.updateObligation(dataKey, oldObligation, newObligation);
     }
 }
