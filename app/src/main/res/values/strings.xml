@@ -38,4 +38,6 @@
     <string name="new_password_confirm_alert">The confirmation of the new password is different from the new password!</string>
     <string name="new_password_same_as_old_alert">New password must be different from the old one!</string>
     <string name="password_changed_success">Password successfully updated.</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>

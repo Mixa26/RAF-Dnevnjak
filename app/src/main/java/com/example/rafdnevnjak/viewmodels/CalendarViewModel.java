@@ -54,6 +54,26 @@ public class CalendarViewModel extends ViewModel {
         }
     }
 
+    public void deleteObligation(String dateKey, Obligation obligation) {
+        ArrayList<Obligation> currObligations = obligationsList.get(dateKey);
+        int toDelete = -1;
+
+        for (int i = 0; i < currObligations.size(); i++){
+            if (currObligations.get(i).getTitle().equals(obligation.getTitle())
+                    && currObligations.get(i).getStartHour() == obligation.getStartHour()
+                    && currObligations.get(i).getStartMinute() == obligation.getStartMinute()
+                    && currObligations.get(i).getEndHour() == obligation.getEndHour()
+                    && currObligations.get(i).getEndMinute() == obligation.getEndMinute())
+            {
+                toDelete = i;
+                break;
+            }
+        }
+
+        obligationsList.get(dateKey).remove(toDelete);
+        obligations.get(dateKey).setValue(new ArrayList<>(obligationsList.get(dateKey)));
+    }
+
     /**
      * Returns the index at which the element should be inserted based on the sorting parameter
      * @param sortParam 0 for sorting by time only, 1 for sorting by time and LOW obligation severity

@@ -1,6 +1,7 @@
 package com.example.rafdnevnjak.view.recycler.adapter;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.rafdnevnjak.R;
 import com.example.rafdnevnjak.model.Date;
 import com.example.rafdnevnjak.model.Obligation;
+import com.example.rafdnevnjak.view.activities.DetailedObligationActivity;
 import com.example.rafdnevnjak.view.activities.MainActivity;
+import com.example.rafdnevnjak.view.fragments.DailyPlanFragment;
 
 public class ObligationAdapter extends ListAdapter<Obligation, ObligationAdapter.ObligationViewHolder> {
 
@@ -34,12 +37,33 @@ public class ObligationAdapter extends ListAdapter<Obligation, ObligationAdapter
     public void onBindViewHolder(@NonNull ObligationViewHolder holder, int position) {
         Obligation obligation = getItem(position);
         holder.bind(obligation);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(holder.itemView.getContext(), DetailedObligationActivity.class);
+            Obligation obligation1 = getCurrentList().get(position);
+            intent.putExtra("obligation", getCurrentList().get(position));
+            intent.putExtra("title", ((MainActivity)holder.itemView.getContext()).getTitle());
+
+            holder.itemView.getContext().startActivity(intent);
+        });
+
+        holder.getDelete().setOnClickListener(v -> {
+            DailyPlanFragment.deleteObligation(((MainActivity)holder.itemView.getContext()).getTitle().toString(), obligation);
+        });
+
+//        holder.getEdit().setOnClickListener(v -> {
+//
+//        });
     }
 
     public static class ObligationViewHolder extends RecyclerView.ViewHolder {
         private TextView time;
         private TextView title;
         private ImageView image;
+
+        private ImageView delete;
+
+        private ImageView edit;
 
         public ObligationViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -48,6 +72,7 @@ public class ObligationAdapter extends ListAdapter<Obligation, ObligationAdapter
             time = itemView.findViewById(R.id.obligationTime);
             title = itemView.findViewById(R.id.obligationTitle);
             image = itemView.findViewById(R.id.obligationSeverity);
+
         }
 
         @SuppressLint("DefaultLocale")
@@ -67,6 +92,16 @@ public class ObligationAdapter extends ListAdapter<Obligation, ObligationAdapter
             else {
                 image.setImageResource(R.drawable.task_low);
             }
+        }
+
+        public ImageView getDelete() {
+            delete = itemView.findViewById(R.id.obligationDeleteIcon);
+            return delete;
+        }
+
+        public ImageView getEdit() {
+            edit = itemView.findViewById(R.id.editDetailedObligation);
+            return edit;
         }
     }
 }

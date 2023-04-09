@@ -39,7 +39,7 @@ import java.util.Objects;
 public class DailyPlanFragment extends Fragment {
 
     //The calendar view model which will store data for obligations of each day
-    private CalendarViewModel calendarViewModel;
+    private static CalendarViewModel calendarViewModel;
 
     //Tab layout which is used to filter the obligations by priority (High, Mid, Low)
     private TabLayout tabLayout;
@@ -292,6 +292,7 @@ public class DailyPlanFragment extends Fragment {
 
     }
 
+
     //This is where we pick up the created obligation from the ObligationActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -307,4 +308,7 @@ public class DailyPlanFragment extends Fragment {
         }
     }
 
+    public static void deleteObligation(String dateKey, Obligation obligation){
+        calendarViewModel.deleteObligation(dateKey, obligation);
+    }
 }
