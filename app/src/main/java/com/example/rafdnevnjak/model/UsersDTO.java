@@ -21,4 +21,13 @@ public class UsersDTO {
 
         return usersDTO.users;
     }
+
+    public String getJSONFromUsers(ArrayList<User> users){
+        Gson gs = new Gson();
+        UsersDTO usersDTO = new UsersDTO();
+        usersDTO.users = users;
+        String usersJSON = gs.toJson(usersDTO, UsersDTO.class);
+
+        return usersJSON;
+    }
 }

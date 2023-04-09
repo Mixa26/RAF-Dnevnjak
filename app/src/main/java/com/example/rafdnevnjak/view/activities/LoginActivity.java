@@ -36,8 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     private SplashViewModel splashViewModel;
 
     //Logical variables
-    private ArrayList<User> users;
-    public static final String currentUserKey = "current-user";
+    private static ArrayList<User> users;
+    public static final String currentUserKey = "current_user";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +121,10 @@ public class LoginActivity extends AppCompatActivity {
                     sharedPreferences.putString(currentUserKey, gs.toJson(user));
                     sharedPreferences.apply();
 
+                    loginEmail.getText().clear();
+                    loginUsername.getText().clear();
+                    loginPassword.getText().clear();
+
                     Intent intent = new Intent(this, MainActivity.class);
                     startActivity(intent);
                     return;
@@ -200,6 +204,22 @@ public class LoginActivity extends AppCompatActivity {
         if (sharedPreferences.contains(currentUserKey)){
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+        }
+    }
+
+    /**
+     * Updates the password for a certain user since we havent made a way to make this changes
+     * persist application shutdown (usually we would store users in a database)
+     * @param username username of the user
+     * @param email email of the user
+     * @param newPassword new password to be set for the user
+     */
+    public static void updateUserPassword(String username, String email, String newPassword){
+        for (User user : users){
+            if (user.getUsername().equals(username) && user.getEmail().equals(email)){
+                user.setPassword(newPassword);
+                return;
+            }
         }
     }
 }

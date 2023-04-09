@@ -18,6 +18,9 @@
             android:name=".view.activities.ObligationActivity"
             android:exported="false" />
         <activity
+            android:name=".view.activities.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.activities.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.RAFDnevnjak.Splash">
