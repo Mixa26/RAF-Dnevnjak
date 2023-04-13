@@ -84,7 +84,7 @@ public class DetailedObligationActivity extends AppCompatActivity {
         });
 
         deleteButton.setOnClickListener(v -> {
-            DailyPlanFragment.deleteObligation(getTitle().toString(), obligation);
+            DailyPlanFragment.deleteObligation(getTitle().toString(), obligation, null);
 
             finish();
         });
@@ -95,13 +95,14 @@ public class DetailedObligationActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK){
             Obligation newObligation = data.getParcelableExtra("obligation");
-            DailyPlanFragment.updateObligation(getTitle().toString(), obligation, newObligation);
+            if (DailyPlanFragment.updateObligation(getTitle().toString(), obligation, newObligation)) {
 
-            titleText.setText(newObligation.getTitle());
-            timeText.setText(new String(String.format(Locale.getDefault(), "%02d:%02d - %02d:%02d",
-                    newObligation.getStartHour(), newObligation.getStartMinute(),
-                    newObligation.getEndHour(), newObligation.getEndMinute())));
-            descriptionText.setText(newObligation.getDescription());
+                titleText.setText(newObligation.getTitle());
+                timeText.setText(new String(String.format(Locale.getDefault(), "%02d:%02d - %02d:%02d",
+                        newObligation.getStartHour(), newObligation.getStartMinute(),
+                        newObligation.getEndHour(), newObligation.getEndMinute())));
+                descriptionText.setText(newObligation.getDescription());
+            }
         }
     }
 }

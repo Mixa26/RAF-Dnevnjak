@@ -49,7 +49,7 @@ public class ObligationAdapter extends ListAdapter<Obligation, ObligationAdapter
         });
 
         holder.getDelete().setOnClickListener(v -> {
-            DailyPlanFragment.deleteObligation(((MainActivity)holder.itemView.getContext()).getTitle().toString(), obligation);
+            DailyPlanFragment.deleteObligation(((MainActivity)holder.itemView.getContext()).getTitle().toString(), obligation, ((MainActivity) holder.itemView.getContext()).findViewById(R.id.recyclerViewDailyPlan));
         });
 
         holder.getEdit().setOnClickListener(v -> {

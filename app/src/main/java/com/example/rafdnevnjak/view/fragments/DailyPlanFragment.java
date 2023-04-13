@@ -1,6 +1,7 @@
 package com.example.rafdnevnjak.view.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import com.example.rafdnevnjak.view.recycler.adapter.ObligationAdapter;
 import com.example.rafdnevnjak.view.recycler.differ.ObligationDiffItemCallback;
 import com.example.rafdnevnjak.viewmodels.CalendarViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import java.time.LocalDate;
@@ -65,11 +67,14 @@ public class DailyPlanFragment extends Fragment {
 
     String title = "";
 
+    private static Context context = null;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_dailyplan, container, false);
         calendarViewModel = new ViewModelProvider(getActivity()).get(CalendarViewModel.class);
+        context = getContext();
 
         init();
 
@@ -344,11 +349,27 @@ public class DailyPlanFragment extends Fragment {
         }
     }
 
-    public static void deleteObligation(String dateKey, Obligation obligation){
-        calendarViewModel.deleteObligation(dateKey, obligation);
+    public static void deleteObligation(String dateKey, Obligation obligation, View view){
+        if (view == null){
+            calendarViewModel.deleteObligation(dateKey, obligation);
+        }
+        else {
+            Snackbar.make(view, "Are you sure you want to delete this obligation?", Snackbar.LENGTH_LONG)
+                    .setAction("Delete", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            calendarViewModel.deleteObligation(dateKey, obligation);
+                        }
+                    })
+                    .show();
+        }
     }
 
-    public static void updateObligation(String dataKey, Obligation oldObligation, Obligation newObligation){
-        calendarViewModel.updateObligation(dataKey, oldObligation, newObligation);
+    public static boolean updateObligation(String dataKey, Obligation oldObligation, Obligation newObligation){
+        if (!calendarViewModel.updateObligation(dataKey, oldObligation, newObligation)){
+            Toast.makeText(context, R.string.obligation_time_overlap, Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 }

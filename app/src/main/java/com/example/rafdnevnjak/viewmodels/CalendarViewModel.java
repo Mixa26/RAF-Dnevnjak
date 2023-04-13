@@ -85,7 +85,7 @@ public class CalendarViewModel extends ViewModel {
      * @param oldObligation old obligation object
      * @param newObligation new obligation object (with the new data)
      */
-    public void updateObligation(String dateKey, Obligation oldObligation, Obligation newObligation) {
+    public boolean updateObligation(String dateKey, Obligation oldObligation, Obligation newObligation) {
         ArrayList<Obligation> currObligations = obligationsList.get(dateKey);
         int toUpdate = -1;
 
@@ -101,8 +101,12 @@ public class CalendarViewModel extends ViewModel {
             }
         }
 
-        obligationsList.get(dateKey).set(toUpdate, newObligation);
-        obligations.get(dateKey).setValue(new ArrayList<>(obligationsList.get(dateKey)));
+        if (checkTimeAvailability(dateKey, newObligation)){
+            obligationsList.get(dateKey).set(toUpdate, newObligation);
+            obligations.get(dateKey).setValue(new ArrayList<>(obligationsList.get(dateKey)));
+            return true;
+        }
+        return false;
     }
 
     /**
