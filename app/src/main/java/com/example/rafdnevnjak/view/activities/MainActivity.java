@@ -14,11 +14,13 @@ import android.view.View;
 
 import com.example.rafdnevnjak.R;
 import com.example.rafdnevnjak.model.Date;
+import com.example.rafdnevnjak.model.Obligation;
 import com.example.rafdnevnjak.view.fragments.CalendarFragment;
 import com.example.rafdnevnjak.view.fragments.DailyPlanFragment;
 import com.example.rafdnevnjak.view.recycler.adapter.MonthAdapter;
 import com.example.rafdnevnjak.view.recycler.differ.DateDiffItemCallback;
 import com.example.rafdnevnjak.view.viewpager.PagerAdapter;
+import com.example.rafdnevnjak.viewmodels.CalendarViewModel;
 import com.example.rafdnevnjak.viewmodels.RecyclerViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private PagerAdapter pagerAdapter;
 
     private Date dateSelected;
+
+    private MonthAdapter.DayViewHolder dateViewSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +102,55 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setCurrentItem(PagerAdapter.DAILY_PLAN, false);
     }
 
+    /**
+     * Returns what color the date should be painted in based on the most important obligation
+     * that day
+     */
+    public int getColorOfDayInCalendar(Date date){
+        if (date == null) return 0;
+
+        String title = date.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " +
+                        date.getDate().getDayOfMonth() + ". " + date.getDate().getYear() + ".";
+
+        CalendarViewModel calendarViewModel = new ViewModelProvider(this).get(CalendarViewModel.class);
+
+        int severity = 0;
+
+        if (calendarViewModel.getObligations(title) == null) return severity;
+
+        List<Obligation> obligations = calendarViewModel.getObligations(title).getValue();
+
+        if (obligations == null)return 0;
+
+        for (Obligation obligation : obligations){
+            if (obligation.getObligationSeverity().equals(Obligation.ObligationSeverity.LOW)){
+                if (severity < 1) {
+                    severity = 1;
+                }
+            }
+            else if (obligation.getObligationSeverity().equals(Obligation.ObligationSeverity.MID)){
+                if (severity < 2) {
+                    severity = 2;
+                }
+            }
+            else{
+                severity = 3;
+            }
+        }
+
+        return severity;
+    }
+
     public Date getDateSelected() {
         return dateSelected;
+    }
+
+    public void setDateViewSelected(MonthAdapter.DayViewHolder dateViewSelected) {
+        this.dateViewSelected = dateViewSelected;
+    }
+
+    public MonthAdapter.DayViewHolder getDateViewSelected() {
+        return dateViewSelected;
     }
 
     @Override

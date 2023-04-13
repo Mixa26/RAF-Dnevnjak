@@ -9,4 +9,7 @@
     <color name="gray">#808080</color>
     <color name="light_gray">#BFBFBF</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="high_severity">#ffa202</color>
+    <color name="mid_severity">#fffc01</color>
+    <color name="low_severity">#0cff02</color>
 </resources>

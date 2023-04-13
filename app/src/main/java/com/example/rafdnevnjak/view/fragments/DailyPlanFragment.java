@@ -63,11 +63,13 @@ public class DailyPlanFragment extends Fragment {
     //Search input
     private SearchView searchView;
 
+    String title = "";
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_dailyplan, container, false);
-        calendarViewModel = new ViewModelProvider(this).get(CalendarViewModel.class);
+        calendarViewModel = new ViewModelProvider(getActivity()).get(CalendarViewModel.class);
 
         init();
 
@@ -84,6 +86,8 @@ public class DailyPlanFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+
+        setColorOfDayInCalendar();
 
         searchView.setQuery("",false);
         searchView.clearFocus();
@@ -132,6 +136,7 @@ public class DailyPlanFragment extends Fragment {
         //Initialize the MutableLiveData list right away so we don't get null pointer on observing
         //in the initializeListeners() function
         if (calendarViewModel.getObligations(getActivity().getTitle().toString()) == null) {
+            title = getActivity().getTitle().toString();
             calendarViewModel.setMutableLiveData(getActivity().getTitle().toString());
             obligationAdapter.submitList(new ArrayList<>());
 
@@ -293,6 +298,36 @@ public class DailyPlanFragment extends Fragment {
 
     }
 
+    /**
+     * Set the coloring of the day in the calendar based on the most prioritized task
+     */
+    private void setColorOfDayInCalendar(){
+        int severity = 0;
+
+        if (calendarViewModel.getObligations(title) == null) return;
+
+        List<Obligation> obligations = calendarViewModel.getObligations(title).getValue();
+
+        if (obligations == null)return;
+
+        for (Obligation obligation : obligations){
+            if (obligation.getObligationSeverity().equals(Obligation.ObligationSeverity.LOW)){
+                if (severity < 1) {
+                    severity = 1;
+                }
+            }
+            else if (obligation.getObligationSeverity().equals(Obligation.ObligationSeverity.MID)){
+                if (severity < 2) {
+                    severity = 2;
+                }
+            }
+            else{
+                severity = 3;
+            }
+        }
+
+        ((MainActivity)getActivity()).getDateViewSelected().setColor(severity);
+    }
 
     //This is where we pick up the created obligation from the ObligationActivity
     @Override
@@ -303,7 +338,7 @@ public class DailyPlanFragment extends Fragment {
             if (calendarViewModel.checkTimeAvailability(getActivity().getTitle().toString(), obligation)) {
                 calendarViewModel.addObligation(getActivity().getTitle().toString(), obligation);
             }
-            else{
+            else {
                 Toast.makeText(getActivity(), R.string.obligation_time_overlap, Toast.LENGTH_LONG).show();
             }
         }

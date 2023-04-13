@@ -42,11 +42,13 @@ public class MonthAdapter extends ListAdapter<Date, MonthAdapter.DayViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
         Date date = getItem(position);
+
         holder.bind(date);
 
         //Open the DailyPlanFragment when a date is selected
         holder.itemView.setOnClickListener(v -> {
             ((MainActivity)holder.itemView.getContext()).openDailyPlanMenu(date);
+            ((MainActivity)holder.itemView.getContext()).setDateViewSelected(holder);
         });
     }
 
@@ -73,6 +75,22 @@ public class MonthAdapter extends ListAdapter<Date, MonthAdapter.DayViewHolder> 
             //Set the day of week text and date text
             dayOfWeek.setText(date.getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
             dateOfMonth.setText(String.valueOf(date.getDate().getDayOfMonth()));
+            setColor(((MainActivity)itemView.getContext()).getColorOfDayInCalendar(date));
+        }
+
+        public void setColor(int severity){
+            if (severity == 0) {
+                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.white));
+            }
+            else if (severity == 1) {
+                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.low_severity));
+            }
+            else if (severity == 2) {
+                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.mid_severity));
+            }
+            else{
+                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.high_severity));
+            }
         }
     }
 }
