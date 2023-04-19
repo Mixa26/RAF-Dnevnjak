@@ -270,14 +270,29 @@ public class DailyPlanFragment extends Fragment {
             //Sorts obligations based on which priority tab is selected
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getId() == R.id.lowTab){
-                    //TODO sort the tasks low to high
-                }
-                else if (tab.getId() == R.id.midTab) {
-                    //TODO sort the tasks mid to high
-                }
-                else {
-                    //TODO sort the tasks high to low
+                if (calendarViewModel.getObligations(getActivity().getTitle().toString()) != null
+                        && calendarViewModel.getObligations(getActivity().getTitle().toString()).getValue() != null) {
+                    obligationAdapter.submitList(new ArrayList<>());
+                    List<Obligation> allObligations = calendarViewModel.getObligations(getActivity().getTitle().toString()).getValue();
+                    List<Obligation> selectedObligations = new ArrayList<>();
+                    for (Obligation obligation : allObligations){
+                        if (tab.getPosition() == 0) {
+                            if (obligation.getObligationSeverity().equals(Obligation.ObligationSeverity.LOW)) {
+                                selectedObligations.add(obligation);
+                            }
+                        }
+                        else if (tab.getPosition() == 1) {
+                            if (obligation.getObligationSeverity().equals(Obligation.ObligationSeverity.MID)) {
+                                selectedObligations.add(obligation);
+                            }
+                        }
+                        else {
+                            if (obligation.getObligationSeverity().equals(Obligation.ObligationSeverity.HIGH)) {
+                                selectedObligations.add(obligation);
+                            }
+                        }
+                    }
+                    obligationAdapter.submitList(new ArrayList<>(selectedObligations));
                 }
             }
 
@@ -288,6 +303,10 @@ public class DailyPlanFragment extends Fragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+                if (calendarViewModel.getObligations(getActivity().getTitle().toString()) != null
+                        && calendarViewModel.getObligations(getActivity().getTitle().toString()).getValue() != null) {
+                    obligationAdapter.submitList(calendarViewModel.getObligations(getActivity().getTitle().toString()).getValue());
+                }
             }
         });
 
@@ -340,7 +359,7 @@ public class DailyPlanFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             Obligation obligation = data.getParcelableExtra("obligation");
-            if (calendarViewModel.checkTimeAvailability(getActivity().getTitle().toString(), obligation)) {
+            if (calendarViewModel.checkTimeAvailability(getActivity().getTitle().toString(), obligation, null)) {
                 calendarViewModel.addObligation(getActivity().getTitle().toString(), obligation);
             }
             else {

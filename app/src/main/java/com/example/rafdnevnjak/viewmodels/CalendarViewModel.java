@@ -101,7 +101,7 @@ public class CalendarViewModel extends ViewModel {
             }
         }
 
-        if (checkTimeAvailability(dateKey, newObligation)){
+        if (checkTimeAvailability(dateKey, newObligation, oldObligation)){
             obligationsList.get(dateKey).set(toUpdate, newObligation);
             obligations.get(dateKey).setValue(new ArrayList<>(obligationsList.get(dateKey)));
             return true;
@@ -167,9 +167,12 @@ public class CalendarViewModel extends ViewModel {
      * Checks if there is overlapping obligations and return false in that case
      * @param dateKey The date formated as (Month dd. yyyy.) for example April 23. 2023.
      * @param obligation The obligation to check the time availability for.
+     * @param oldObligation If we try to edit a obligation, we need to allow it to be at the
+     *                      same time it was before so we pass this if we're editing a existing
+     *                      obligation, pass null if creating a new one
      * @return false if there are overlapping obligations at the provided time, true otherwise
      */
-    public boolean checkTimeAvailability(String dateKey, Obligation obligation){
+    public boolean checkTimeAvailability(String dateKey, Obligation obligation, Obligation oldObligation){
         ArrayList<Obligation> dailyObligations = obligationsList.get(dateKey);
 
         //This shouldn't happen, but we ensure the sanity check
@@ -194,6 +197,9 @@ public class CalendarViewModel extends ViewModel {
         int currStart = 0;
         int beforeCurrEnd = 0;
         for (int i = 0; i < dailyObligations.size(); i++){
+            if (oldObligation != null && dailyObligations.get(i).getObligationSeverity().equals(oldObligation.getObligationSeverity())
+                && dailyObligations.get(i).getTitle().equals(oldObligation.getTitle())
+                && dailyObligations.get(i).getDescription().equals(oldObligation.getDescription()))return true;
             obligationStart = obligation.getStartHour() * 100 + obligation.getStartMinute();
             obligationEnd = obligation.getEndHour() * 100 + obligation.getEndMinute();
             currStart = dailyObligations.get(i).getStartHour() * 100 + dailyObligations.get(i).getStartMinute();

@@ -102,6 +102,7 @@ public class DetailedObligationActivity extends AppCompatActivity {
                         newObligation.getStartHour(), newObligation.getStartMinute(),
                         newObligation.getEndHour(), newObligation.getEndMinute())));
                 descriptionText.setText(newObligation.getDescription());
+                finish();
             }
         }
     }
