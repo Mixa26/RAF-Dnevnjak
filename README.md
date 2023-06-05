@@ -20,3 +20,39 @@ been colored based on the highest obligation severity that day (if its high it w
 a bit more to see how all of this works :).
 
 The original documentation for this project is in the "RAF Dnevnjak - Specifikacija.docx" file.
+
+# The application itself:
+
+## Splash screen:
+![SplashScreen](https://github.com/Mixa26/RAF-Dnevnjak/assets/71144280/e2c3a83e-866b-4484-9f71-c5c83189ff34)
+<br>
+## Login screen:
+![Login](https://github.com/Mixa26/RAF-Dnevnjak/assets/71144280/d83cbee8-3a59-4348-a7cd-d5788184dc84)
+<br>
+## Calendar:
+![Calendar](https://github.com/Mixa26/RAF-Dnevnjak/assets/71144280/f90a095d-dcc5-40ae-9862-a7e6381c5db0)
+<br>
+## Detailed date:
+![Obligations](https://github.com/Mixa26/RAF-Dnevnjak/assets/71144280/5b6062e7-2565-43ac-b812-d61c1404e46f)
+<br>
+## Add a obligation to a certain date:
+![CreateObligation](https://github.com/Mixa26/RAF-Dnevnjak/assets/71144280/a967bc3a-262e-45f8-b2a6-8d86bca0199b)
+<br>
+## Calendar colours its date based on the most severe obligation that day:
+![ColouredCalendar](https://github.com/Mixa26/RAF-Dnevnjak/assets/71144280/3e1b1edb-a711-4e32-b185-2cfe36507168)
+<br>
+## Filter obligations based on their severity:
+![FilterObligations](https://github.com/Mixa26/RAF-Dnevnjak/assets/71144280/8c510eed-1ed0-45df-83c2-ba05dc6b4d5f)
+<br>
+## Search obligations through the search field:
+![SearchObligations](https://github.com/Mixa26/RAF-Dnevnjak/assets/71144280/c5382852-63b4-4128-be0b-bd8f1fc0cad5)
+<br>
+## Detailed obligation view:
+![DetailedObligation](https://github.com/Mixa26/RAF-Dnevnjak/assets/71144280/abdaa1ea-9bd7-4f46-8aa4-4a184d6dbed6)
+<br>
+## Edit profile screen:
+![Profile](https://github.com/Mixa26/RAF-Dnevnjak/assets/71144280/be9b6622-edea-4e63-86a3-3b65f0e7a54b)
+<br>
+## Change password:
+![ChangePassword](https://github.com/Mixa26/RAF-Dnevnjak/assets/71144280/50183867-ead6-4323-bdd0-4b9387bc216f)
+<br>
